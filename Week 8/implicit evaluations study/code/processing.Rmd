@@ -1,7 +1,7 @@
 ---
 title: "Evaluations of positive and negative stimuli using the Affective Misattribution Procedure (AMP) and self-reports"
 subtitle: "Data processing"
-author: "Template: Ian Hussey; content: [Student name]"
+author: "Template: Ian Hussey; content: [Lukas]"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -37,7 +37,7 @@ library(stringr)
 data_demographics_raw <- read_csv("../data/raw/data_demographics_raw.csv") |>
   janitor::clean_names()
 
-# data_demographics_raw_messy <- read_csv("../../../data/raw/data_demographics_raw_messy.csv", skip = 2) |>
+# data_demographics_raw_messy <- read_csv("../data/raw/data_demographics_raw_messy.csv", skip = 2) |>
 #   janitor::clean_names()
 
 # self report measure
@@ -85,70 +85,90 @@ data_amp_performance_criteria <- data_amp_raw |>
   summarize(proportion_fast_trials_amp = mean(latency_prob)) |>
   mutate(exclude_amp_performance = ifelse(proportion_fast_trials_amp > 0.10, "exclude", "include"))
 
+# determine modal number of trials
+data_amp_completeness <- data_amp_raw |>
+  filter(blockcode != "practice",
+         trialcode != "instructions") |>
+  group_by(subject) |>
+  count() |>
+  ungroup() |>
+  mutate(exclude_amp_completeness = ifelse(n == 72, "include", "exclude")) |>
+  select(-n)
 
+ data_amp_completeness |>
+   count(n)
+ 
 
-#assignment week 7 (2)solution with the help of chatgpt:
-# 1. Exploring the Number of Trials:
-# Firstly, we'll filter the data for non-practice trials and then explore the number of trials for each subject.
-
-library(dplyr)
-
-
-# Filter data for non-practice trials and count the number of trials for each subject
-trial_counts <- data_amp_raw %>%
-   filter(blockcode != "practice", 
-          trialcode != "instructions") %>%
-  group_by(subject) %>%
-  summarise(num_trials = n())
-
-
-# Summary of trial counts
-summary(trial_counts$num_trials)
-# 2. Visualizing the Number of Trials:
-# A histogram will allow us to visually inspect the distribution of trial counts.
-# 
-
-library(ggplot2)
-
-plot<- ggplot(trial_counts, aes(x=num_trials)) +
-  geom_histogram(binwidth=1) +
-  theme_minimal() +
-  labs(title="Distribution of AMP Task Trials per Subject",
-       x="Number of Trials",
-       y="Number of Subjects")
-
-print(plot)
-
-
-# 3. Identifying the Common Trial Count:
-# By finding the mode, we can ascertain the most frequent trial count.
-# 
-
-common_trial_count <- as.numeric(names(which.max(table(trial_counts$num_trials))))
-common_trial_count
-
-
-# 4. Incorporating the Exclusion Criterion:
-# Now, we'll add the criterion to the existing data processing code to exclude subjects who do not have the correct number of trials.
-# 
-
-data_amp_performance_criteria <- data_amp_raw %>% 
-   filter(blockcode != "practice", 
-          trialcode != "instructions") %>% 
-  mutate(latency_prob = if_else(latency < 100, TRUE, FALSE)) %>% 
-  group_by(subject) %>% 
-  mutate(num_trials = n()) %>% 
-  summarize(proportion_fast_trials_amp = mean(latency_prob),
-            total_trials = first(num_trials)) %>% 
-  mutate(exclude_amp_performance = ifelse(proportion_fast_trials_amp > 0.10 | total_trials != common_trial_count, "exclude", "include"))
-
-
-# Brief Description:
-# To determine the correct number of trials for the AMP task, I started by filtering out practice trials and instructions. I then counted the number of trials for each subject. By visualizing this distribution with a histogram, I could observe the pattern of trial counts across subjects. The mode of this distribution, which represents the most common trial count, was assumed to be the correct number. This value was then incorporated into the data processing code, marking subjects with an incorrect trial count for exclusion. 
-# 
 
 
 ```
+
+- One participant with 8 trials appears to be a partial completion (check raw data?)
+- One participant with 144 trials appears to be a repeat participant. I've chosen to exclude them entirely, but you could also have a more elaborate strategy where you retain only their first completion.
+
+
+##AMP assignment week 8
+
+```{r}
+
+
+data_amp_prime_target <- data_amp_raw |>
+  select("subject", blockcode, "trialcode", "primestim", "targetstim", evaluative_response = correct) |>
+  filter(blockcode != "practice",
+         trialcode != "instructions") |>
+  mutate(is_congruent = case_when(trialcode == "prime_positive" & evaluative_response == 1 ~ TRUE, 
+                                  trialcode == "prime_negative" & evaluative_response == 0 ~ TRUE, 
+                                  TRUE ~ FALSE))
+
+view(data_amp_prime_target)
+
+
+# Sanity Check 1: Check if is_congruent contains only TRUE or FALSE values
+if (!all(data_amp_prime_target$is_congruent %in% c(TRUE, FALSE))) {
+  stop("Error: The is_congruent column contains invalid values.")
+}
+
+
+# Compute AMP score for each subject
+amp_score <- data_amp_prime_target %>%
+  group_by(subject) %>%
+  summarize(amp_score = mean(is_congruent, na.rm = TRUE))  # Proportion of TRUE in is_congruent column
+
+view(amp_score)
+
+
+#sanity check 1.1 
+
+summary_stats_amp_score <- data_amp_scored %>%
+  summarize(
+    mean_amp_score = mean(amp_score, na.rm = TRUE),
+    sd_amp_score = sd(amp_score, na.rm = TRUE),
+    min_amp_score = min(amp_score, na.rm = TRUE),
+    max_amp_score = max(amp_score, na.rm = TRUE)
+  )
+
+print(summary_stats_amp_score)
+
+
+
+
+
+# Sanity Check 2: Ensure AMP scores are between 0 and 1
+if (any(data_amp_scored$amp_score < 0 | data_amp_scored$amp_score > 1)) {
+  stop("Error: Invalid AMP scores detected.")
+}
+
+# Sanity Check 3: Confirm there are no NA subjects
+if (any(is.na(data_amp_scored$subject))) {
+  stop("Error: There are subjects with NA AMP scores.")
+}
+
+
+
+
+```
+
+
 
 # Self-reports
 
@@ -193,7 +213,9 @@ TODO extract evaluations on the AMP test blocks and convert to an overall bias s
 # combine all dfs created in the previous chunks
 data_processed_temp <- dat_age_gender |>
   full_join(data_selfreport_scored, by = "subject") |> 
-  full_join(data_amp_performance_criteria, by = "subject")
+  full_join(data_amp_performance_criteria, by = "subject") |>
+  full_join(data_amp_completeness, by = "subject")|>
+  full_join(amp_score, by = "subject")
 
 # flag all subjects with more than one row in the wide-format data. these should be excluded in the analysis.
 # a more elaborate approach would be to track down the individual dupicate cases and determine which of the mulitiple cases should be retained. 
@@ -224,33 +246,8 @@ data_processed <- data_processed_before_exclusions |>
                                          is.na(gender) ~ "exclude",
                                          exclude_amp_performance == "exclude" ~ "exclude",
                                          exclude_duplicate_data == "exclude" ~ "exclude",
-                                          # Adding exclusions for missing self-report items
-                                         is.na(like) ~ "exclude",
-                                         is.na(positive) ~ "exclude",
-                                         is.na(prefer) ~ "exclude",
-                                         
+                                         exclude_amp_completeness == "exclude" ~ "exclude", 
                                          TRUE ~ "include"))
-
-
-
-#assignment Weeek 7 
-
-# 1. see above:# Adding exclusions for missing self-report items
-#                                          is.na(like) ~ "exclude",
-#                                          is.na(positive) ~ "exclude",
-#                                          is.na(prefer) ~ "exclude",
-#                                          
-# 
-# 2. because we already deleted duuplicate subjects. Each subject only has a trial
-# count of n =1 which is in my opinine the "correct" number of trials? i dont know
-# if i misunderstand the question....or is the task to choose a method for choosing a proportion of the people who have "too fast responses"??---- ahh no we have togo to aMP??
-
-
-
-
-
-
-
 
 ```
 
