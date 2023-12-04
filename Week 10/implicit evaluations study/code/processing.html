@@ -1665,33 +1665,39 @@ stimuli using the Affective Misattribution Procedure (AMP) and
 self-reports</h1>
 <h3 class="subtitle">Data processing</h3>
 <h4 class="author">Template: Ian Hussey; content: [Student name]</h4>
-<h4 class="date">27 November, 2023</h4>
+<h4 class="date">04 Dezember, 2023</h4>
 
 </div>
 
 
 <div id="dependencies" class="section level1">
 <h1>Dependencies</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(janitor) <span class="co"># for clean_names()</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(stringr)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># This code loads the &#39;tidyverse&#39; suite of data science packages, the &#39;janitor&#39; package for data cleaning, specifically the &#39;clean_names()&#39; function, and the &#39;stringr&#39; package for string operations in R.</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">library</span>(janitor) <span class="co"># for clean_names()</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="fu">library</span>(stringr)</span></code></pre></div>
 </div>
 <div id="get-data" class="section level1">
 <h1>Get data</h1>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># demographics</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>data_demographics_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;../data/raw/data_demographics_raw.csv&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>()</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co"># data_demographics_raw_messy &lt;- read_csv(&quot;../data/raw/data_demographics_raw_messy.csv&quot;, skip = 2) |&gt;</span></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#   janitor::clean_names()</span></span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># The code reads four different CSV files into R, each representing a distinct data set. It uses the &#39;read_csv&#39; function for reading and &#39;janitor::clean_names()&#39; for standardizing column names. The first dataset is &#39;data_demographics_raw&#39;, the second (commented out) is &#39;data_demographics_raw_messy&#39;, the third is &#39;data_selfreport_raw&#39;, and the fourth is &#39;data_amp_raw&#39;.</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co"># demographics</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>data_demographics_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;../data/raw/data_demographics_raw.csv&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>()</span>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co"># self report measure</span></span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>data_selfreport_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;../data/raw/data_selfreport_raw.csv&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>()</span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co"># affect attribution procedure</span></span>
-<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>data_amp_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;../data/raw/data_amp_raw.csv&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>()</span></code></pre></div>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co"># data_demographics_raw_messy &lt;- read_csv(&quot;../data/raw/data_demographics_raw_messy.csv&quot;, skip = 2) |&gt;</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#   janitor::clean_names()</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co"># self report measure</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>data_selfreport_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;../data/raw/data_selfreport_raw.csv&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>()</span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co"># affect attribution procedure</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a>data_amp_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;../data/raw/data_amp_raw.csv&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>()</span></code></pre></div>
 </div>
 <div id="demographics" class="section level1">
 <h1>Demographics</h1>
@@ -1714,26 +1720,28 @@ self-reports</h1>
 <h1>Exclusions / data quality</h1>
 <div id="amp" class="section level2">
 <h2>AMP</h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>data_amp_performance_criteria <span class="ot">&lt;-</span> data_amp_raw <span class="sc">|&gt;</span> </span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="fu">filter</span>(blockcode <span class="sc">!=</span> <span class="st">&quot;practice&quot;</span>, </span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>         trialcode <span class="sc">!=</span> <span class="st">&quot;instructions&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">latency_prob =</span> <span class="fu">if_else</span>(latency <span class="sc">&lt;</span> <span class="dv">100</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="fu">group_by</span>(subject) <span class="sc">|&gt;</span> </span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">proportion_fast_trials_amp =</span> <span class="fu">mean</span>(latency_prob)) <span class="sc">|&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">exclude_amp_performance =</span> <span class="fu">ifelse</span>(proportion_fast_trials_amp <span class="sc">&gt;</span> <span class="fl">0.10</span>, <span class="st">&quot;exclude&quot;</span>, <span class="st">&quot;include&quot;</span>))</span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co"># determine modal number of trials</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>data_amp_completeness <span class="ot">&lt;-</span> data_amp_raw <span class="sc">|&gt;</span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>  <span class="fu">filter</span>(blockcode <span class="sc">!=</span> <span class="st">&quot;practice&quot;</span>,</span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>         trialcode <span class="sc">!=</span> <span class="st">&quot;instructions&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>  <span class="fu">group_by</span>(subject) <span class="sc">|&gt;</span></span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">|&gt;</span></span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">exclude_amp_completeness =</span> <span class="fu">ifelse</span>(n <span class="sc">==</span> <span class="dv">72</span>, <span class="st">&quot;include&quot;</span>, <span class="st">&quot;exclude&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>n)</span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a></span>
-<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co"># data_amp_completeness |&gt;</span></span>
-<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co">#   count(n)</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># This code processes the &#39;data_demographics_raw&#39; dataset. It selects specific columns, reshapes data with &#39;pivot_wider&#39;, and cleans the &#39;gender&#39; and &#39;age&#39; columns with various string operations and conditions. The cleaned data is stored in &#39;_age_gender&#39;. The next section on &#39;Exclusions / data quality&#39; for the AMP (Affect Misattribution Procedure) dataset applies two filters for performance criteria and completeness. &#39;data_amp_performance_criteria&#39; calculates the proportion of fast trials per subject and determines exclusion based on this proportion. &#39;data_amp_completeness&#39; checks if each subject completed the expected number of trials, marking them for inclusion or exclusion based on this.</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>data_amp_performance_criteria <span class="ot">&lt;-</span> data_amp_raw <span class="sc">|&gt;</span> </span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="fu">filter</span>(blockcode <span class="sc">!=</span> <span class="st">&quot;practice&quot;</span>, </span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>         trialcode <span class="sc">!=</span> <span class="st">&quot;instructions&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">latency_prob =</span> <span class="fu">if_else</span>(latency <span class="sc">&lt;</span> <span class="dv">100</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="fu">group_by</span>(subject) <span class="sc">|&gt;</span> </span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">proportion_fast_trials_amp =</span> <span class="fu">mean</span>(latency_prob)) <span class="sc">|&gt;</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">exclude_amp_performance =</span> <span class="fu">ifelse</span>(proportion_fast_trials_amp <span class="sc">&gt;</span> <span class="fl">0.10</span>, <span class="st">&quot;exclude&quot;</span>, <span class="st">&quot;include&quot;</span>))</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co"># determine modal number of trials</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>data_amp_completeness <span class="ot">&lt;-</span> data_amp_raw <span class="sc">|&gt;</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>  <span class="fu">filter</span>(blockcode <span class="sc">!=</span> <span class="st">&quot;practice&quot;</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>         trialcode <span class="sc">!=</span> <span class="st">&quot;instructions&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>  <span class="fu">group_by</span>(subject) <span class="sc">|&gt;</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">|&gt;</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">exclude_amp_completeness =</span> <span class="fu">ifelse</span>(n <span class="sc">==</span> <span class="dv">72</span>, <span class="st">&quot;include&quot;</span>, <span class="st">&quot;exclude&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>n)</span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co"># data_amp_completeness |&gt;</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co">#   count(n)</span></span></code></pre></div>
 <ul>
 <li>One participant with 8 trials appears to be a partial completion
 (check raw data?)</li>
@@ -1770,18 +1778,22 @@ elaborate strategy where you retain only their first completion.</li>
 <h1>Affect Misattribution Procedure</h1>
 <p>TODO extract evaluations on the AMP test blocks and convert to an
 overall bias score</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>data_amp_score_congruence <span class="ot">&lt;-</span> data_amp_raw <span class="sc">|&gt;</span> </span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">select</span>(subject, <span class="at">evaluative_response =</span> correct, trialcode, blockcode) <span class="sc">|&gt;</span> </span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">filter</span>(blockcode <span class="sc">!=</span> <span class="st">&quot;practice&quot;</span>, </span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>         trialcode <span class="sc">!=</span> <span class="st">&quot;instructions&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">trialcode =</span> <span class="fu">case_when</span>(trialcode <span class="sc">==</span> <span class="st">&quot;prime_positive&quot;</span> <span class="sc">~</span> <span class="dv">1</span>, </span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>                               trialcode <span class="sc">==</span> <span class="st">&quot;prime_negative&quot;</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>                               <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA</span>),</span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>         <span class="at">prime_congruence =</span> <span class="fu">ifelse</span>(trialcode <span class="sc">==</span> evaluative_response, <span class="dv">1</span>, <span class="dv">0</span>)) </span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a></span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co"># sanity check 1: if you consider all the combiantions of factor levels of trialcode, evaluative_response, and prime congruence, there should be only 4:</span></span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>data_amp_score_congruence <span class="sc">|&gt;</span></span>
-<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>  <span class="fu">count</span>(trialcode, evaluative_response, prime_congruence)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># The code creates a dataset &#39;data_amp_score_congruence&#39; from &#39;data_amp_raw&#39;, selecting and transforming relevant columns for AMP (Affect Misattribution Procedure) analysis. It filters out practice and instruction trials, recodes trialcodes, and calculates prime congruence. Three sanity checks are performed: 1) verifying that there are only 4 combinations of trialcode, evaluative_response, and prime_congruence, 2) ensuring that AMP_score is numeric, and 3) confirming AMP_score values are within the range [0, 1]. Finally, &#39;data_amp_score&#39; summarizes the average AMP score for each subject.</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>data_amp_score_congruence <span class="ot">&lt;-</span> data_amp_raw <span class="sc">|&gt;</span> </span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="fu">select</span>(subject, <span class="at">evaluative_response =</span> correct, trialcode, blockcode) <span class="sc">|&gt;</span> </span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="fu">filter</span>(blockcode <span class="sc">!=</span> <span class="st">&quot;practice&quot;</span>, </span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>         trialcode <span class="sc">!=</span> <span class="st">&quot;instructions&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">trialcode =</span> <span class="fu">case_when</span>(trialcode <span class="sc">==</span> <span class="st">&quot;prime_positive&quot;</span> <span class="sc">~</span> <span class="dv">1</span>, </span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>                               trialcode <span class="sc">==</span> <span class="st">&quot;prime_negative&quot;</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>                               <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA</span>),</span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>         <span class="at">prime_congruence =</span> <span class="fu">ifelse</span>(trialcode <span class="sc">==</span> evaluative_response, <span class="dv">1</span>, <span class="dv">0</span>)) </span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co"># sanity check 1: if you consider all the combiantions of factor levels of trialcode, evaluative_response, and prime congruence, there should be only 4:</span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>data_amp_score_congruence <span class="sc">|&gt;</span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>  <span class="fu">count</span>(trialcode, evaluative_response, prime_congruence)</span></code></pre></div>
 <pre><code>## # A tibble: 4 × 4
 ##   trialcode evaluative_response prime_congruence     n
 ##       &lt;dbl&gt;               &lt;dbl&gt;            &lt;dbl&gt; &lt;int&gt;
@@ -1831,28 +1843,35 @@ overall bias score</p>
 </div>
 <div id="define-master-exclusions" class="section level1">
 <h1>Define master exclusions</h1>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># create a master exclude_participant variable</span></span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>data_processed <span class="ot">&lt;-</span> data_processed_before_exclusions <span class="sc">|&gt;</span></span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">exclude_participant =</span> <span class="fu">case_when</span>(<span class="fu">tolower</span>(age) <span class="sc">==</span> <span class="st">&quot;test&quot;</span> <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>,</span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>                                         <span class="fu">tolower</span>(gender) <span class="sc">==</span> <span class="st">&quot;test&quot;</span> <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>,</span>
-<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>                                         <span class="fu">is.na</span>(mean_evaluation) <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>,</span>
-<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>                                         <span class="co"># in this case we will exclude participants with missing demographics data or outcomes measures data. </span></span>
-<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>                                         <span class="co"># Note that &quot;list-wise exclusions&quot; like this aren&#39;t always justified, as missingness often isn&#39;t at random. </span></span>
-<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>                                         <span class="co"># How to treat missing data is a  whole area of work in itself, which we wont cover here.</span></span>
-<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>                                         <span class="fu">is.na</span>(age) <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>, </span>
-<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>                                         <span class="fu">is.na</span>(gender) <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>,</span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>                                         exclude_amp_performance <span class="sc">==</span> <span class="st">&quot;exclude&quot;</span> <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>,</span>
-<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>                                         exclude_duplicate_data <span class="sc">==</span> <span class="st">&quot;exclude&quot;</span> <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>,</span>
-<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>                                         exclude_amp_completeness <span class="sc">==</span> <span class="st">&quot;exclude&quot;</span> <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>, </span>
-<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>                                         <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;include&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># This code combines all previously created dataframes into a single dataframe &#39;data_processed_temp&#39;. It then identifies and flags subjects with duplicate entries, creating &#39;data_processed_duplicates&#39;. After joining this with &#39;data_processed_temp&#39;, it forms &#39;data_processed_before_exclusions&#39;. Finally, the code creates a &#39;master exclude_participant&#39; variable in &#39;data_processed&#39;, applying various criteria to determine participant exclusion, including test entries, missing demographic or outcome measure data, performance criteria, duplicates, and completeness of data.</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co"># create a master exclude_participant variable</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>data_processed <span class="ot">&lt;-</span> data_processed_before_exclusions <span class="sc">|&gt;</span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">exclude_participant =</span> <span class="fu">case_when</span>(<span class="fu">tolower</span>(age) <span class="sc">==</span> <span class="st">&quot;test&quot;</span> <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>                                         <span class="fu">tolower</span>(gender) <span class="sc">==</span> <span class="st">&quot;test&quot;</span> <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>                                         <span class="fu">is.na</span>(mean_evaluation) <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>                                         <span class="co"># in this case we will exclude participants with missing demographics data or outcomes measures data. </span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>                                         <span class="co"># Note that &quot;list-wise exclusions&quot; like this aren&#39;t always justified, as missingness often isn&#39;t at random. </span></span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>                                         <span class="co"># How to treat missing data is a  whole area of work in itself, which we wont cover here.</span></span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>                                         <span class="fu">is.na</span>(age) <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>, </span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>                                         <span class="fu">is.na</span>(gender) <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>,</span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a>                                         exclude_amp_performance <span class="sc">==</span> <span class="st">&quot;exclude&quot;</span> <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>,</span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a>                                         exclude_duplicate_data <span class="sc">==</span> <span class="st">&quot;exclude&quot;</span> <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>,</span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a>                                         exclude_amp_completeness <span class="sc">==</span> <span class="st">&quot;exclude&quot;</span> <span class="sc">~</span> <span class="st">&quot;exclude&quot;</span>, </span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a>                                         <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;include&quot;</span>))</span></code></pre></div>
 </div>
 <div id="write-to-disk" class="section level1">
 <h1>Write to disk</h1>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># in case this dir doesn&#39;t exist, create it</span></span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">&quot;../data/processed/&quot;</span>)</span>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># This code first ensures the existence of a directory &#39;../data/processed/&#39; by creating it if it doesn&#39;t exist. Then, it saves the &#39;data_processed&#39; dataframe as a CSV file in this directory.</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a></span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co"># save data to disk in that dir</span></span>
-<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="fu">write_csv</span>(data_processed, <span class="st">&quot;../data/processed/data_processed.csv&quot;</span>)</span></code></pre></div>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co"># in case this dir doesn&#39;t exist, create it</span></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">&quot;../data/processed/&quot;</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="co"># save data to disk in that dir</span></span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a><span class="fu">write_csv</span>(data_processed, <span class="st">&quot;../data/processed/data_processed.csv&quot;</span>)</span></code></pre></div>
 </div>
 <div id="create-codebook-template-for-the-processed-data" class="section level1">
 <h1>Create codebook template for the processed data</h1>
@@ -1860,19 +1879,24 @@ overall bias score</p>
 template to disk. The template should then be filled in manually with
 descriptions of each variable so that someone else could understand what
 these variables represent.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">library</span>(openxlsx)</span>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="co"># This code checks if the file &#39;data_processed_codebook.xlsx&#39; exists in the &#39;../data/processed/&#39; directory. If it doesn&#39;t, it creates a new dataframe &#39;codebook_template&#39; with column names from &#39;data_processed&#39; as variables and a column for explanations, initially filled with NA. This dataframe is then saved as an Excel file in the specified directory.</span></span>
 <span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">&quot;../data/processed/data_processed_codebook.xlsx&quot;</span>)){</span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>  <span class="co"># convert the column names to a df</span></span>
-<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>  codebook_template <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">variable =</span> <span class="fu">colnames</span>(data_processed)) <span class="sc">|&gt;</span></span>
-<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">explanation =</span> <span class="cn">NA</span>)</span>
-<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>  <span class="co"># write to disk as an excel file</span></span>
-<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>  <span class="fu">write.xlsx</span>(codebook_template, <span class="at">file =</span> <span class="st">&quot;../data/processed/data_processed_codebook.xlsx&quot;</span>)</span>
-<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="fu">library</span>(openxlsx)</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">&quot;../data/processed/data_processed_codebook.xlsx&quot;</span>)){</span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>  <span class="co"># convert the column names to a df</span></span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>  codebook_template <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">variable =</span> <span class="fu">colnames</span>(data_processed)) <span class="sc">|&gt;</span></span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">explanation =</span> <span class="cn">NA</span>)</span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>  <span class="co"># write to disk as an excel file</span></span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>  <span class="fu">write.xlsx</span>(codebook_template, <span class="at">file =</span> <span class="st">&quot;../data/processed/data_processed_codebook.xlsx&quot;</span>)</span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div id="session-info" class="section level1">
 <h1>Session info</h1>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co"># This line of code calls the &#39;sessionInfo()&#39; function in R, which displays information about the current R session, including the R version, operating system, and loaded packages and their versions.</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
 <pre><code>## R version 4.3.1 (2023-06-16 ucrt)
 ## Platform: x86_64-w64-mingw32/x64 (64-bit)
 ## Running under: Windows 10 x64 (build 19045)

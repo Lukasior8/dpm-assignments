@@ -13,6 +13,7 @@ output:
 ---
 
 ```{r, include=FALSE}
+# This code sets global options for knitr chunks in an R Markdown document, disabling both messages and warnings.
 
 knitr::opts_chunk$set(message = FALSE,
                       warning = FALSE)
@@ -22,6 +23,8 @@ knitr::opts_chunk$set(message = FALSE,
 # Dependencies
 
 ```{r}
+# This code loads the 'tidyverse' suite of data science packages, the 'janitor' package for data cleaning, specifically the 'clean_names()' function, and the 'stringr' package for string operations in R.
+
 
 library(tidyverse)
 library(janitor) # for clean_names()
@@ -32,6 +35,9 @@ library(stringr)
 # Get data
 
 ```{r}
+
+# The code reads four different CSV files into R, each representing a distinct data set. It uses the 'read_csv' function for reading and 'janitor::clean_names()' for standardizing column names. The first dataset is 'data_demographics_raw', the second (commented out) is 'data_demographics_raw_messy', the third is 'data_selfreport_raw', and the fourth is 'data_amp_raw'.
+
 
 # demographics
 data_demographics_raw <- read_csv("../data/raw/data_demographics_raw.csv") |>
@@ -76,6 +82,7 @@ dat_age_gender <- data_demographics_raw |>
 ## AMP
 
 ```{r}
+# This code processes the 'data_demographics_raw' dataset. It selects specific columns, reshapes data with 'pivot_wider', and cleans the 'gender' and 'age' columns with various string operations and conditions. The cleaned data is stored in '_age_gender'. The next section on 'Exclusions / data quality' for the AMP (Affect Misattribution Procedure) dataset applies two filters for performance criteria and completeness. 'data_amp_performance_criteria' calculates the proportion of fast trials per subject and determines exclusion based on this proportion. 'data_amp_completeness' checks if each subject completed the expected number of trials, marking them for inclusion or exclusion based on this.
 
 data_amp_performance_criteria <- data_amp_raw |> 
   filter(blockcode != "practice", 
@@ -135,6 +142,9 @@ data_selfreport_scored <-
 TODO extract evaluations on the AMP test blocks and convert to an overall bias score
 
 ```{r}
+# The code creates a dataset 'data_amp_score_congruence' from 'data_amp_raw', selecting and transforming relevant columns for AMP (Affect Misattribution Procedure) analysis. It filters out practice and instruction trials, recodes trialcodes, and calculates prime congruence. Three sanity checks are performed: 1) verifying that there are only 4 combinations of trialcode, evaluative_response, and prime_congruence, 2) ensuring that AMP_score is numeric, and 3) confirming AMP_score values are within the range [0, 1]. Finally, 'data_amp_score' summarizes the average AMP score for each subject.
+
+
 
 data_amp_score_congruence <- data_amp_raw |> 
   select(subject, evaluative_response = correct, trialcode, blockcode) |> 
@@ -197,6 +207,9 @@ data_processed_before_exclusions <- data_processed_temp |>
 # Define master exclusions
 
 ```{r}
+# This code combines all previously created dataframes into a single dataframe 'data_processed_temp'. It then identifies and flags subjects with duplicate entries, creating 'data_processed_duplicates'. After joining this with 'data_processed_temp', it forms 'data_processed_before_exclusions'. Finally, the code creates a 'master exclude_participant' variable in 'data_processed', applying various criteria to determine participant exclusion, including test entries, missing demographic or outcome measure data, performance criteria, duplicates, and completeness of data.
+
+
 
 # create a master exclude_participant variable
 data_processed <- data_processed_before_exclusions |>
@@ -219,6 +232,9 @@ data_processed <- data_processed_before_exclusions |>
 
 ```{r}
 
+# This code first ensures the existence of a directory '../data/processed/' by creating it if it doesn't exist. Then, it saves the 'data_processed' dataframe as a CSV file in this directory.
+
+
 # in case this dir doesn't exist, create it
 dir.create("../data/processed/")
 
@@ -234,6 +250,7 @@ If it has not already been created, this code write the codebook template to dis
 \TODO The template should then be filled in manually with descriptions of each variable so that someone else could understand what these variables represent.
 
 ```{r}
+# This code checks if the file 'data_processed_codebook.xlsx' exists in the '../data/processed/' directory. If it doesn't, it creates a new dataframe 'codebook_template' with column names from 'data_processed' as variables and a column for explanations, initially filled with NA. This dataframe is then saved as an Excel file in the specified directory.
 
 
 library(openxlsx)
@@ -250,6 +267,7 @@ if(!file.exists("../data/processed/data_processed_codebook.xlsx")){
 # Session info
 
 ```{r}
+# This line of code calls the 'sessionInfo()' function in R, which displays information about the current R session, including the R version, operating system, and loaded packages and their versions.
 
 sessionInfo()
 
