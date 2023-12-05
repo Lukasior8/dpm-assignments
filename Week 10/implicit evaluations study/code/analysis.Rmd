@@ -13,6 +13,9 @@ output:
 ---
 
 ```{r, include=FALSE}
+# This code configures options for R Markdown knitting and the R session. It sets knitr chunk options to suppress messages and warnings during knitting, and alters the R session option 'scipen' to disable scientific notation, favoring full numeric representation.
+
+
 
 # set knit options
 knitr::opts_chunk$set(message = FALSE,
@@ -26,6 +29,8 @@ options(scipen = 999)
 # Dependencies
 
 ```{r}
+# This code loads various R libraries: 'tidyverse' for data manipulation, 'knitr' and 'kableExtra' for formatting tables, 'janitor' for data cleaning, 'scales' and 'gridExtra' for plotting adjustments, 'ggplot2' and 'ggExtra' for enhanced graphical capabilities, and 'devtools' for development tasks.
+
 
 library(tidyverse)
 library(knitr)
@@ -46,6 +51,8 @@ library(devtools)
 Load the processed data and apply the global exclusions.
 
 ```{r}
+# This code reads the 'data_processed.csv' file into R, creating a dataframe 'data_processed'. Then it filters this dataframe to include only those rows where 'exclude_participant' is marked as "include", resulting in a new dataframe 'data_processed_after_exclusions'.
+
 
 data_processed <- read_csv("../data/processed/data_processed.csv")
 
@@ -59,6 +66,8 @@ data_processed_after_exclusions <- data_processed |>
 ## Sample size before exclusions
 
 ```{r}
+# This code counts the number of rows in the 'data_processed' dataframe and formats the result as a table using 'kable' and 'kable_classic' functions. It adds a header row titled "Whole sample" above the table. The header spans one column, as indicated by the value "1" in the header argument.
+
 
 data_processed |>
   count(name = "n") |>
@@ -73,6 +82,8 @@ data_processed |>
 Sample used in subsequent analyses
 
 ```{r}
+# This code counts the number of rows in the 'data_processed_after_exclusions' dataframe and displays this count in a table using the 'kable' function. It adds a header row with the title "For analysis", spanning one column, and applies the 'kable_classic' style with 'full_width' set to FALSE for table formatting.
+
 
 data_processed_after_exclusions |>
   count(name = "n") |>
@@ -85,6 +96,8 @@ data_processed_after_exclusions |>
 ## Age
 
 ```{r}
+# This code processes 'data_processed_after_exclusions', converts the 'age' column to numeric, and calculates the mean and standard deviation (SD) of age, excluding missing values. The results are rounded to one decimal place using 'janitor::round_half_up'. The data is then displayed in a table with 'kable' and styled using 'kable_classic', including a header row titled "Age" spanning two columns.
+
 
 data_processed_after_exclusions |>
   mutate(age = as.numeric(age)) |>
@@ -100,6 +113,8 @@ data_processed_after_exclusions |>
 ## Gender
 
 ```{r}
+# This code processes the 'data_processed_after_exclusions' dataset by renaming the 'gender' column to 'Gender'. It then groups the data by gender and calculates the count and percentage of each gender category. The gender names are formatted to sentence case for better presentation. The resulting data is displayed in a table using 'kable' with 'kable_class
+
 
 data_processed_after_exclusions |> 
   rename(Gender = gender) |>
@@ -121,6 +136,9 @@ Descriptive statistics and plots of the measures (excluding the demographics var
 ### Descriptive stats
 
 ```{r}
+# This code calculates and combines self-reported evaluation statistics for the full sample and by gender category. It first computes the mean, standard deviation (SD), and count (n) for the full sample, then repeats this process grouping by gender. The results from both calculations are combined into one table, selecting and renaming relevant columns. The column names are formatted for better presentation, and numeric values are rounded to two decimal places. The final table is displayed using 'kable' with a header and 'kable_classic' styling.
+
+
 
 # overall self-reported evaluations
 dat_mean_ratings <- data_processed_after_exclusions |>
@@ -151,6 +169,9 @@ bind_rows(dat_mean_ratings,
 ### Descriptive plot
 
 ```{r}
+# This code creates a histogram using 'ggplot2' to visualize the distribution of mean self-reported evaluations in the 'data_processed_after_exclusions' dataset. The histogram's bins are set to a width of 0.05, and colors are defined using the 'viridis' palette. The x-axis is labeled as "Mean self-reported evaluation", and the y-axis as "Frequency". The plot uses the 'theme_linedraw' for a clean look, and the x-axis scale is adjusted for better readability with 'pretty_breaks'.
+
+
 
 ggplot(data_processed_after_exclusions, aes(x = mean_evaluation)) +
   geom_histogram(binwidth = 0.05,
@@ -172,6 +193,9 @@ ggplot(data_processed_after_exclusions, aes(x = mean_evaluation)) +
 \TODO add table of means, SDs, Ns
 
 ```{r}
+# This code generates descriptive statistics for self-reported evaluations in the 'data_processed_after_exclusions' dataset, both for the full sample and by gender. It computes the mean, standard deviation (SD), and count (n) for these groups. The results are combined into one table, with columns selected and renamed for clarity. Numeric values are rounded to two decimal places for presentation. The final table is formatted using 'kable' with an added header row and 'kable_classic' styling for a polished look.
+
+
 ### Descriptive stats
 
 # all self evluations 
@@ -204,6 +228,9 @@ bind_rows(dat_mean_ratings,
 ### Descriptive plots
 
 ```{r}
+# This code creates a histogram for the 'AMP_score' variable in the 'data_processed_after_exclusions' dataset using 'ggplot2'. The histogram's bin width is set to 0.05 with custom fill and color using the 'viridis' palette. The x-axis is labeled as "AMP score", and the y-axis as "Frequency". It uses 'theme_linedraw' for styling, with a modification to make the grid lines less prominent, as per Ian's feedback. The x-axis scale is adjusted for readability using 'pretty_breaks'.
+
+
 
 ggplot(data_processed_after_exclusions, aes(x = AMP_score)) +
   geom_histogram(binwidth = 0.05,
@@ -227,6 +254,9 @@ ggplot(data_processed_after_exclusions, aes(x = AMP_score)) +
 ### Plot
 
 ```{r}
+# The code creates four scatter plots using 'ggplot2' to visualize the relationship between AMP scores and mean self-reported evaluations in the 'data_processed_after_exclusions' dataset. Each plot uses 'geom_jitter' for point dispersion and 'viridis_pal' for color. The first two plots include a linear model fit ('geom_smooth') to indicate trends. The third plot switches axes, plotting AMP score on the y-axis and mean evaluation on the x-axis. The fourth plot is a basic jitter plot without the linear model fit. All plots are styled with 'theme_linedraw' for a clean appearance.
+
+
 
 ggplot(data_processed_after_exclusions, 
        aes(x = AMP_score,
@@ -283,6 +313,9 @@ Scatter plots with axial histograms using ggExtra: https://cran.r-project.org/we
 \TODO add axial histograms to a scatter plot. Split both the scatter plot and the histograms by gender.
 
 ```{r}
+# The code creates a scatter plot 'scatterplotv1' using 'ggplot2', showing the relationship between AMP scores and mean self-reported evaluations from 'data_processed_after_exclusions', with data points colored by gender. 'geom_jitter' is used to add variability to the point positions, enhancing visibility. Marginal histograms for both axes are added using 'ggMarginal', with grouping by color. The plot is printed at the end. The comments suggest adjusting the legend location and using customized colors instead of default ones for better visual appeal.
+
+
 scatterplotv1 <- ggplot(data_processed_after_exclusions,
        aes(x = AMP_score,
            y = mean_evaluation,
@@ -309,6 +342,9 @@ Label points using ggrepel: https://cran.r-project.org/web/packages/ggrepel/vign
 \TODO Label the points in a scatter plot using their participant codes.
 
 ```{r}
+# The code constructs a scatter plot 'pointslabeldgraph' using 'ggplot2' with AMP scores on the x-axis and mean self-reported evaluations on the y-axis, labeling points with the 'subject' identifier. It uses 'geom_jitter' for point dispersion with colors from the 'viridis' palette. 'geom_text_repel' from the 'ggrepel' package is used to add labels to points with AMP scores more than two standard deviations away from the mean (|z| > 2), enhancing readability and focus on outliers. The plot is styled with 'theme_linedraw' for a clean appearance.
+
+
 library(viridis) # If you are using viridis for color scales
 
 library(ggrepel)
@@ -337,6 +373,10 @@ Magnify areas of your plot with ggmagnify: https://hughjonesd.github.io/ggmagnif
 \TODO Magnify an area of one of your scatter plots, eg where there are a lot of data points in a small area.
 
 ```{r}
+# The code creates a scatter plot 'ggp' using 'ggplot2', visualizing the relationship between AMP scores and mean self-reported evaluations from 'data_processed_after_exclusions'. It uses 'geom_jitter' for point dispersion and the 'viridis' color palette. The plot is styled with 'theme_linedraw'. A magnified inset is added using 'geom_magnify' from the 'ggmagnify' package, focusing on a specific region defined in the 'from' parameter. The location of the magnified inset on the plot is controlled by the 'to' parameter. The comment inquires about maintaining a square aspect ratio for the magnified area, which is important for preserving the scale and proportions in the magnified view.
+
+
+
 # Load necessary libraries
 library(ggplot2)
 
@@ -375,6 +415,18 @@ ggp + geom_magnify(from = from, to = to)
 \TODO split histogram, split violin plot, raincloud plot, etc.
 
 ```{r}
+
+# # The code creates three different types of plots to visualize the distribution of AMP scores by gender in 'data_processed_after_exclusions'.
+# 
+# 1. 'splithistogramv1': A split histogram with histograms for each gender category, using 'facet_grid' for separation and 'geom_histogram' with a dodge position. It is styled with 'theme_minimal'.
+# 
+# 2. 'splitviolinv1': A split violin plot, featuring violin plots and embedded boxplots for each gender category, using 'facet_wrap' for separation. It is also styled with 'theme_minimal'.
+# 
+# 3. 'raincloudplotv1': A raincloud plot combining half violin plots, boxplots, and quasirandom points to show the distribution of AMP scores by gender. This plot uses 'geom_violin', 'geom_boxplot', and 'geom_quasirandom' from the 'ggbeeswarm' package. The plot omits the legend as per Ian's suggestion for simplicity, given the redundancy with the fill and color coding.
+# 
+# Each plot is designed to provide a distinct visual representation of the data, offering different perspectives on the distribution and variability of AMP scores across genders.
+
+
 #split histogram
 # Create the base plot
 splithistogramv1 <- ggplot(data_processed_after_exclusions, aes(x = AMP_score, fill = gender)) +
@@ -445,6 +497,8 @@ print(raincloudplotv1)
 This time, vary the labeling and order of the legend, e.g., capitalise "Men" and "Women", and know how to change the order of the factors.
 
 ```{r}
+# The code creates 'splithistogramv2', a split histogram plot using 'ggplot2' to visualize AMP score distributions by gender in the 'data_processed_after_exclusions' dataset. It features histograms for each gender category, arranged side by side using 'facet_grid'. The histogram bins are positioned using 'dodge' and the binwidth is set to 0.15. The plot is labeled with appropriate x and y-axis labels. The 'scale_fill_manual' function customizes the color scheme (blue for males, red for females, green for nonbinary individuals) and the legend, with labels for each gender category and a specified order for the legend entries. The plot is styled with 'theme_minimal' for a clean and straightforward visual presentation.
+
 
 splithistogramv2 <- ggplot(data_processed_after_exclusions, aes(x = AMP_score, fill = gender)) +
     geom_histogram(position = "dodge", binwidth = 0.15) + # Adjust binwidth as needed
@@ -466,21 +520,16 @@ print(splithistogramv2)
 \TODO run an appropriate test. Below the output, print an interpretation of the results generated by the ‘easystats’ package [report](https://easystats.github.io/report/). I.e., use `report::report()`.
 
 ```{r}
-# The dataset includes four categories in the gender column: "male," "female," "nonbinary," and "other/missing/error." The counts for these categories are as follows:
-# 
-# Male: 55
-# Female: 40
-# Nonbinary: 3
-# Other/Missing/Error: 2
-# Given these distributions, here are the best statistical tests to consider for your hypothesis "Self-reported evaluations differ between men and women":
-# 
-# Two-sample T-test (Excluding Nonbinary and Other/Missing/Error): If your focus is strictly on comparing men and women, you can exclude the "nonbinary" and "other/missing/error" categories and perform a two-sample t-test. This is appropriate if you're specifically interested in the difference between "male" and "female" only.
-# 
-# ANOVA (Including All Categories): If you want to consider differences across all gender categories, an ANOVA test is suitable. This will tell you if there are overall differences in self-reported evaluations across the different gender categories. If the ANOVA shows significant results, you can then perform post-hoc tests to explore differences between specific pairs of groups (e.g., men vs. women, men vs. nonbinary).
 
-# Kruskal-Wallis Test (Non-parametric Alternative): If your data does not meet the assumptions for an ANOVA (like normality), you can use the Kruskal-Wallis test as a non-parametric alternative. This test also works well when some groups have very small sample sizes, like the "nonbinary" group in your dataset.
+
+# # The code outlines a statistical analysis approach to test the hypothesis "Self-reported evaluations differ between men and women" using the 'data_processed' dataset. Two different tests are considered based on gender categorization:
 # 
-# Given the small number of nonbinary participants, the first option (a two-sample t-test excluding nonbinary and other/missing/error data) might be the most straightforward approach if your hypothesis is specifically about men versus women. However, if you want to consider all gender categories, an ANOVA followed by post-hoc tests would be a comprehensive approach.
+# 1. Two-sample T-test: The data is filtered to include only "male" and "female" categories, and a two-sample t-test is conducted to compare these two groups. The 't.test' function is used, and the result is reported using the 'report' package, which provides a detailed and interpretative output of the test results.
+# 
+# 2. ANOVA: The data is filtered to include "male", "female", and "nonbinary" categories. An ANOVA test is then run to assess differences across these gender categories. This is suitable for a broader analysis that includes all categories. The result of the ANOVA is also reported using the 'report' package for detailed insights.
+# 
+# These statistical tests are chosen based on the nature of the hypothesis and the distribution of the gender categories in the dataset.
+# 
 
 
 library(dplyr)
@@ -526,6 +575,7 @@ Combine plots using patchwork: https://patchwork.data-imaginist.com/
 \TODO Combine at least three of the above plots into one.
 
 ```{r}
+# The code uses the 'patchwork' library in R to combine three different plots ('splithistogramv1', 'splitviolinv1', 'raincloudplotv1') into a single composite plot, 'combined_plot'. These plots are arranged vertically (/ operator in 'patchwork' stacks the plots). The 'print' function is then used to display the combined plot. This approach allows for a comparative visualization of the same data across different plot types, providing a comprehensive view of the data's distribution and characteristics.
 
 
 library(patchwork)
@@ -546,6 +596,8 @@ Save plots to disk with `ggsave()`
 \TODO Save the above combined plot to disk as both .png and .pdf. Ensure the png has at least 300dpi resolution.
 
 ```{r}
+# The code saves the 'combined_plot' to disk in two formats using the 'ggsave' function. The first command saves it as a PNG image file named "combined_plot.png" with a resolution of 300 DPI, suitable for high-quality print and screen displays. The second command saves the same plot as a PDF file named "combined_plot.pdf", which is ideal for publications or presentations where vector graphics are preferred for their scalability and quality.
+
 
 # Save as PNG with 300 DPI
 ggsave("combined_plot.png", plot = combined_plot, dpi = 300)
@@ -558,6 +610,7 @@ ggsave("combined_plot.pdf", plot = combined_plot)
 # Session info
 
 ```{r}
+# The 'sessionInfo()' command in R is used to display detailed information about the current R session. This includes the version of R, the operating system, and a list of loaded packages along with their versions. It's a useful command for documenting the computational environment in which an analysis was conducted, ensuring reproducibility and transparency.
 
 sessionInfo()
 
