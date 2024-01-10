@@ -1,6 +1,6 @@
 ---
 title: "Plot assignment"
-author: "Template: Ian Hussey; content: [Student name]"
+author: "Template: Ian Hussey; content: [Lukas Sidler]"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -10,6 +10,8 @@ output:
     toc: yes
     toc_float: yes
 ---
+
+#notes to myself
 - make it clear that u are able to fiddle with a good and a bad plot
 bad plot
 value level low if many participant make it cluttered. 
@@ -50,7 +52,18 @@ knitr::opts_chunk$set(message = FALSE,
 
 ```{r}
 
+library(magick)
+library(palmerpenguins)
 library(tidyverse)
+library(ggplot2)
+library(datasets)
+library(ggbeeswarm)
+library(viridis)
+library(grid) 
+library(ggimage)
+library(imager)
+library(ggmagnify)
+library(viridis)
 
 ```
 
@@ -66,6 +79,8 @@ The plots must be reproducible. Provide the data as well as the code to reporduc
 
 Under each plot, here in the RMarkdown, briefly explain what types of analysis the plot is suitable for, what elements of the results the plot attempts to clearly convey. For the bad plot, do the opposite: emphasise what features of the results the plot obscures or makes unclear. In doing so, communicate to me that you understand what makes a good plot to convey the results of quantiative analyses to viewers.
 
+
+
 Consider making use of the many extensions to ggplot2, e.g.:
 
 - https://r-graph-gallery.com
@@ -77,13 +92,65 @@ Consider making use of the many extensions to ggplot2, e.g.:
 - ggsignif
 - and others: https://exts.ggplot2.tidyverse.org/gallery/
 
-# Good plot
+# Testversion
 
 ```{r}
 
 
 
+
 ```
+
+
+
+# Good plot
+
+```{r}
+
+data("penguins")
+
+#The data originates from a long-term biological study on penguins at the Palmer Station in Antarctica, and is available in the free dataset of the R Studio library palmerpenguins.
+
+# Raincloud Plot 
+
+GoodPenguinPlot <- penguins %>%
+  na.omit() %>%
+# Initialize a ggplot with species on the x-axis, body_mass_g on the y-axis, and fill color based on species
+  ggplot(aes(x = species, y = body_mass_g, fill = species)) +
+# Add a violin plot layer: untrimmed for full data representation, semi-transparent, with black outlines
+  geom_violin(trim = FALSE, alpha = 0.5, color = "black") +
+# Add a boxplot layer: narrow width, no outliers, transparent fill, black outlines
+  geom_boxplot(width = 0.2, outlier.shape = NA, alpha = 0, color = "black") +
+# Add jittered points using quasirandom placement to prevent overplotting, colored by species
+  geom_quasirandom(aes(color = species), size = 1, alpha = 0.8) +
+# Apply the viridis color scale for the fill (nice for printing/colourblind people)
+  scale_fill_viridis(discrete = TRUE) +
+# Apply the viridis color scale for the point colors
+  scale_color_viridis(discrete = TRUE) +
+# Set the plot title and axis labels
+  labs(x = "Species", y = "Weight (g)") +
+# Apply a minimalistic theme for a cleaner look
+  theme_minimal()+
+# Remove the legend, because it would be redundant
+  theme(legend.position = "none")
+
+GoodPenguinPlot
+
+
+```
+
+
+
+
+The Palmer Penguins dataset originates from a study conducted by Dr. Kristen Gorman with the Palmer Station, Antarctica, to examine the morphology of three penguin species - Adelie, Chinstrap, and Gentoo. In this plot i will use this parts of this dataset and focus on the difference in weight between the different species.
+
+This "GoodPenguinPlot" is suitable for a comparative analysis, especially for understanding distribution and central tendencies of quantitative data across different categories, in this case weights of penguin species.
+It's ideal for visualizing how the body mass of penguins varies across species, revealing both the spread (variation) and the central tendency (median) of the data.
+The Violin Plot shows the distribution of data, making it easy to see the density of points at different values, which is crucial for understanding the overall shape of the distribution.
+I combined it with a Box Plot to clearly indicate the median, quartiles, and range, providing a summary of the data distribution in a compact form. With Jittered Points I Display individual data points to highlight the actual data distribution and identify any potential outliers or data clusters.
+The combination of these elements makes the plot effective in communicating the differences in penguin species' body masses.
+The use of the viridis color palette ensures accessibility for viewers with color vision deficiencies and maintains clarity in black-and-white prints. I applied a minimalistic theme for a cleaner look and removed the legend, because it would be redundant. The axis labels have been renamed and kept simple.
+
 
 # Bad plot
 
@@ -91,17 +158,92 @@ Consider making use of the many extensions to ggplot2, e.g.:
 
 
 
+
+
+background_picture <- image_read("Penguinpicture.png") 
+ 
+  # Define the area to be magnified
+from <- c(xmin = 1, xmax = 2, ymin = 3500, ymax = 4000)
+
+# Define where to place the magnified inset on the plot
+to <- c(xmin = 2, xmax = 3, ymin = 3000, ymax = 3500)
+
+
+
+
+BadPenguinPlot <- penguins %>%
+  na.omit() %>%
+  ggplot(aes(x = species, y = body_mass_g, fill = species)) +
+  annotation_custom(rasterGrob(as.raster(background_picture), width = unit(1, "npc"), height = unit(1, "npc")), 
+                    xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
+  geom_violin(trim = 3500, alpha = 0.5, fill = "grey") +
+  geom_boxplot(width = 10, outlier.shape = 1, alpha = 0.5, fill = "pink") +
+  geom_quasirandom(aes(color = species), size = 10, alpha = 1) + 
+  scale_color_manual(values = c("lightpink", "darkred", "#880808")) +
+  scale_y_continuous(limits = c(3000, 4500)) +
+  geom_magnify(from =  from, to = to) + 
+  theme(text = element_text(color = "lightgreen"),                    
+    axis.title = element_text(color = "grey"),      
+    axis.text = element_text(color = "lightblue"),          
+    legend.title = element_text(color = "lightgrey"),    
+    legend.text = element_text(color = "lightyellow"))   
+
+
+
+
+BadPenguinPlot
+
+#the background of the plot is a programmin penguin which is
+#the size of the datapoints is too big aswell as the size and with of the boxplots
+#the categories are placed too close together 
+# with the alpha level of the quasidrome set to 1, they are intransparent and with the size set too big they cover up the violin plot.
+#the scale cuts of some datapoints
+#the coulour of the Plots is ugly and not deutlich unterscheidbar zwischen den Kategorien. 
+# the legend is redandant 
+# geom magnify overwrites data and doesnt ,magnify a useful area
+#colour of text elements is set to a barely visiblle
+
+
+
+
 ```
+
+In an attempt to visualize the weight differences among three penguin species from the Palmer Penguins dataset, I created the "BadPenguinPlot." This plot, while intended to showcase the variances in penguin body mass, purposfully suffers from several flaws that undermine its effectiveness as a data visualization tool.
+
+Firstly, I incorporated a background image of a programming penguin, which, while whimsical, distracts from the data itself. The size and width of the data points and boxplots are excessively large, leading to a cluttered appearance and making it difficult to discern individual data points.
+
+The arrangement of the categories is too cramped, reducing the plot's readability. By setting the alpha level of the quasirandom points to 1, these points become completely opaque, overshadowing the underlying violin plot. Additionally, the size of these points is too large, further obscuring important details of the plot.
+
+The y-axis scale, limited to a range of 3000 to 4500 grams, cuts off some data points, thus failing to represent the full scope of the dataset. The color choice for the plots is not only unappealing but also fails to provide clear differentiation between the species, which is crucial for comparative analysis.
+
+The legend, apart from being redundant, adding to the confusion. The use of 'geom_magnify' has been poorly implemented, as it overwrites data without magnifying any relevant or useful area of the plot.
+
+Finally, the choice of text color, ranging from light green to light yellow, results in poor visibility against the plot's background, making it challenging to read the text elements.
+
+
+
 
 # Write to disk
 
 Write to disk as a .pdf or .png.
 
-Name them "plot_good_[yourname]" and "plot_bad_[yourname]".
+Name them "plot_good_[Lukas]" and "plot_bad_[Lukas]".
 
 ```{r}
 
+# Save GoodPenguinPlot as a PDF
+ggsave("plot_good_[Lukas].pdf", plot = GoodPenguinPlot)
 
+# Save BadPenguinPlot as a PDF
+ggsave("plot_bad_[Lukas].pdf", plot = BadPenguinPlot)
+
+
+
+# Save GoodPenguinPlot as a PNG
+#ggsave("plot_good_[Lukas].png", plot = GoodPenguinPlot)
+
+# Save BadPenguinPlot as a PNG
+#ggsave("plot_bad_[Lukas].png", plot = BadPenguinPlot)
 
 ```
 
