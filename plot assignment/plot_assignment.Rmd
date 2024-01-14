@@ -102,7 +102,7 @@ GoodPenguinPlot <- penguins %>%
 # Apply the viridis color scale for the point colors
   scale_color_viridis(discrete = TRUE) +
 # Set the plot title and axis labels
-  labs(x = "Species", y = "Weight (g)") +
+  labs(x = "Species", y = "Weight (g)", title = "Penguin Species and Body Mass Distribution") +
 # Apply a minimalistic theme for a cleaner look
   theme_minimal()+
 # Remove the legend, because it would be redundant
