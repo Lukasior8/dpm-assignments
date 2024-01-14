@@ -1,0 +1,276 @@
+---
+title: "Evaluations of positive and negative stimuli using the Affective Misattribution Procedure (AMP) and self-reports"
+subtitle: "Data processing"
+author: "Template: Ian Hussey; content: [Lukas Sidler]"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    code_folding: hide
+    highlight: haddock
+    theme: flatly
+    toc: yes
+    toc_float: yes
+---
+
+```{r, include=FALSE}
+# This code sets global options for knitr chunks in an R Markdown document, disabling both messages and warnings.
+
+knitr::opts_chunk$set(message = FALSE,
+                      warning = FALSE)
+
+```
+
+# Dependencies
+
+```{r}
+# This code loads the 'tidyverse' suite of data science packages, the 'janitor' package for data cleaning, specifically the 'clean_names()' function, and the 'stringr' package for string operations in R.
+
+
+library(tidyverse)
+library(janitor) # for clean_names()
+library(stringr)
+
+```
+
+# Get data
+
+```{r}
+
+# The code reads four different CSV files into R, each representing a distinct data set. It uses the 'read_csv' function for reading and 'janitor::clean_names()' for standardizing column names. The first dataset is 'data_demographics_raw', the second (commented out) is 'data_demographics_raw_messy', the third is 'data_selfreport_raw', and the fourth is 'data_amp_raw'.
+
+
+# demographics
+data_demographics_raw <- read_csv("../data/raw/data_demographics_raw.csv") |>
+  janitor::clean_names()
+
+# data_demographics_raw_messy <- read_csv("../data/raw/data_demographics_raw_messy.csv", skip = 2) |>
+#   janitor::clean_names()
+
+# self report measure
+data_selfreport_raw <- read_csv("../data/raw/data_selfreport_raw.csv") |>
+  janitor::clean_names()
+
+# affect attribution procedure
+data_amp_raw <- read_csv("../data/raw/data_amp_raw.csv") |>
+  janitor::clean_names()
+
+```
+
+# Demographics
+
+```{r}
+
+dat_age_gender <- data_demographics_raw |>
+  select(subject, date, time, trialcode, response) |>
+  pivot_wider(names_from = trialcode,
+              values_from = response) |>
+  mutate(gender = tolower(gender),
+         gender = stringr::str_remove_all(gender, regex("\\W+")), # regex is both very useful and awful to write
+         gender = case_when(gender == "female" ~ gender,
+                            gender == "male" ~ gender,
+                            gender == "nonbinary" ~ gender,
+                            gender == "woman" ~ "female",
+                            gender == "man" ~ "male",
+                            TRUE ~ "other/missing/error"),
+         age = case_when(str_detect(age, "^[0-9]+$") ~ age, # if the value is only numbers, keep it. 
+                         TRUE ~ "other/missing/error")) 
+
+```
+
+# Exclusions / data quality
+
+## AMP
+
+```{r}
+# This code processes the 'data_demographics_raw' dataset. It selects specific columns, reshapes data with 'pivot_wider', and cleans the 'gender' and 'age' columns with various string operations and conditions. The cleaned data is stored in '_age_gender'. The next section on 'Exclusions / data quality' for the AMP (Affect Misattribution Procedure) dataset applies two filters for performance criteria and completeness. 'data_amp_performance_criteria' calculates the proportion of fast trials per subject and determines exclusion based on this proportion. 'data_amp_completeness' checks if each subject completed the expected number of trials, marking them for inclusion or exclusion based on this.
+
+data_amp_performance_criteria <- data_amp_raw |> 
+  filter(blockcode != "practice", 
+         trialcode != "instructions") |> 
+  mutate(latency_prob = if_else(latency < 100, TRUE, FALSE)) |> 
+  group_by(subject) |> 
+  summarize(proportion_fast_trials_amp = mean(latency_prob)) |>
+  mutate(exclude_amp_performance = ifelse(proportion_fast_trials_amp > 0.10, "exclude", "include"))
+
+# determine modal number of trials
+data_amp_completeness <- data_amp_raw |>
+  filter(blockcode != "practice",
+         trialcode != "instructions") |>
+  group_by(subject) |>
+  count() |>
+  ungroup() |>
+  mutate(exclude_amp_completeness = ifelse(n == 72, "include", "exclude")) |>
+  select(-n)
+
+# data_amp_completeness |>
+#   count(n)
+
+```
+
+- One participant with 8 trials appears to be a partial completion (check raw data?)
+- One participant with 144 trials appears to be a repeat participant. I've chosen to exclude them entirely, but you could also have a more elaborate strategy where you retain only their first completion.
+
+# Self-reports
+
+```{r}
+
+# trial level data
+data_selfreport_trial_level <- data_selfreport_raw |>
+  select(subject, trialcode, response) |>
+  filter(trialcode %in% c("like", "prefer", "positive")) |>
+  rename(item = trialcode) |>
+  filter(response != "Ctrl+'B'") |>
+  mutate(response = as.numeric(response))
+
+# mean scored
+data_selfreport_mean_score <- data_selfreport_trial_level |>
+  group_by(subject) |>
+  summarize(mean_evaluation = mean(response, na.rm = TRUE))
+
+# combined
+data_selfreport_scored <- 
+  full_join(data_selfreport_trial_level |>
+              pivot_wider(names_from = "item",
+                          values_from = "response"),
+            data_selfreport_mean_score,
+            by = "subject")
+
+```
+
+# Affect Misattribution Procedure
+
+TODO extract evaluations on the AMP test blocks and convert to an overall bias score
+
+```{r}
+# The code creates a dataset 'data_amp_score_congruence' from 'data_amp_raw', selecting and transforming relevant columns for AMP (Affect Misattribution Procedure) analysis. It filters out practice and instruction trials, recodes trialcodes, and calculates prime congruence. Three sanity checks are performed: 1) verifying that there are only 4 combinations of trialcode, evaluative_response, and prime_congruence, 2) ensuring that AMP_score is numeric, and 3) confirming AMP_score values are within the range [0, 1]. Finally, 'data_amp_score' summarizes the average AMP score for each subject.
+
+
+
+data_amp_score_congruence <- data_amp_raw |> 
+  select(subject, evaluative_response = correct, trialcode, blockcode) |> 
+  filter(blockcode != "practice", 
+         trialcode != "instructions") |> 
+  mutate(trialcode = case_when(trialcode == "prime_positive" ~ 1, 
+                               trialcode == "prime_negative" ~ 0,
+                               TRUE ~ NA),
+         prime_congruence = ifelse(trialcode == evaluative_response, 1, 0)) 
+
+# sanity check 1: if you consider all the combiantions of factor levels of trialcode, evaluative_response, and prime congruence, there should be only 4:
+data_amp_score_congruence |>
+  count(trialcode, evaluative_response, prime_congruence)
+
+data_amp_score_congruence |>
+  count(trialcode, evaluative_response, prime_congruence) |>
+  nrow() == 4
+
+# calculate AMP score 
+data_amp_score <- data_amp_score_congruence |> 
+  group_by(subject) |> 
+  summarize(AMP_score = mean(prime_congruence, na.rm = TRUE)) |> 
+  select(subject, AMP_score)
+
+# sanity check 2: check if AMP_score is numeric 
+is.numeric(data_amp_score$AMP_score)
+
+# sanity check 3: check if AMP_score is bounded [0,1]
+data_amp_score |> 
+  mutate(bounded_correctly = between(AMP_score, left = 0, right = 1)) |>
+  filter(bounded_correctly != TRUE) |>
+  nrow() == 0
+
+```
+
+# Combine
+
+```{r}
+
+# combine all dfs created in the previous chunks
+data_processed_temp <- dat_age_gender |>
+  full_join(data_selfreport_scored, by = "subject") |> 
+  full_join(data_amp_score, by = "subject") |> 
+  full_join(data_amp_performance_criteria, by = "subject") |>
+  full_join(data_amp_completeness, by = "subject")
+
+# flag all subjects with more than one row in the wide-format data. these should be excluded in the analysis.
+# a more elaborate approach would be to track down the individual dupicate cases and determine which of the mulitiple cases should be retained. 
+data_processed_duplicates <- data_processed_temp |>
+  count(subject) |>
+  mutate(exclude_duplicate_data = if_else(n > 1, "exclude", "include")) |>
+  select(-n)
+
+# join in the duplicates df
+data_processed_before_exclusions <- data_processed_temp |>
+  full_join(data_processed_duplicates, by = "subject")
+
+```
+
+# Define master exclusions
+
+```{r}
+# This code combines all previously created dataframes into a single dataframe 'data_processed_temp'. It then identifies and flags subjects with duplicate entries, creating 'data_processed_duplicates'. After joining this with 'data_processed_temp', it forms 'data_processed_before_exclusions'. Finally, the code creates a 'master exclude_participant' variable in 'data_processed', applying various criteria to determine participant exclusion, including test entries, missing demographic or outcome measure data, performance criteria, duplicates, and completeness of data.
+
+
+
+# create a master exclude_participant variable
+data_processed <- data_processed_before_exclusions |>
+  mutate(exclude_participant = case_when(tolower(age) == "test" ~ "exclude",
+                                         tolower(gender) == "test" ~ "exclude",
+                                         is.na(mean_evaluation) ~ "exclude",
+                                         # in this case we will exclude participants with missing demographics data or outcomes measures data. 
+                                         # Note that "list-wise exclusions" like this aren't always justified, as missingness often isn't at random. 
+                                         # How to treat missing data is a  whole area of work in itself, which we wont cover here.
+                                         is.na(age) ~ "exclude", 
+                                         is.na(gender) ~ "exclude",
+                                         exclude_amp_performance == "exclude" ~ "exclude",
+                                         exclude_duplicate_data == "exclude" ~ "exclude",
+                                         exclude_amp_completeness == "exclude" ~ "exclude", 
+                                         TRUE ~ "include"))
+
+```
+
+# Write to disk
+
+```{r}
+
+# This code first ensures the existence of a directory '../data/processed/' by creating it if it doesn't exist. Then, it saves the 'data_processed' dataframe as a CSV file in this directory.
+
+
+# in case this dir doesn't exist, create it
+dir.create("../data/processed/")
+
+# save data to disk in that dir
+write_csv(data_processed, "../data/processed/data_processed.csv")
+
+```
+
+
+
+# Create codebook template for the processed data
+If it has not already been created, this code write the codebook template to disk.
+\TODO The template should then be filled in manually with descriptions of each variable so that someone else could understand what these variables represent.
+
+```{r}
+# This code checks if the file 'data_processed_codebook.xlsx' exists in the '../data/processed/' directory. If it doesn't, it creates a new dataframe 'codebook_template' with column names from 'data_processed' as variables and a column for explanations, initially filled with NA. This dataframe is then saved as an Excel file in the specified directory.
+
+
+library(openxlsx)
+
+if(!file.exists("../data/processed/data_processed_codebook.xlsx")){
+  # convert the column names to a df
+  codebook_template <- data.frame(variable = colnames(data_processed)) |>
+    mutate(explanation = NA)
+  # write to disk as an excel file
+  write.xlsx(codebook_template, file = "../data/processed/data_processed_codebook.xlsx")
+}
+```
+
+# Session info
+
+```{r}
+# This line of code calls the 'sessionInfo()' function in R, which displays information about the current R session, including the R version, operating system, and loaded packages and their versions.
+
+sessionInfo()
+
+```
+
+

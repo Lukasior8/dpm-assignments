@@ -11,32 +11,6 @@ output:
     toc_float: yes
 ---
 
-#notes to myself
-- make it clear that u are able to fiddle with a good and a bad plot
-bad plot
-value level low if many participant make it cluttered. 
-
-
-not too basic somewehre in the middle like raincloud plots are nice
-
-
-data is beautiflul
-
-so we have to return
-
-- pdf/png format of the plot
-- the (made up data)
-- the code
-
-
-it doent have to be the same type for bad and good
-
-example for datasets( we can also ask chatgpt )
-osf.io
-
-AIID dataset 
-
-
 
 
 

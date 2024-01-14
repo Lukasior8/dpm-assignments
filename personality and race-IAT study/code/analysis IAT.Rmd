@@ -1,0 +1,413 @@
+---
+title: "Examining the relationship between the big-5 personality facets and implicit racial attitudes"
+subtitle: "analysis IAT"
+author: "Lukas Sidler"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    code_folding: hide
+    highlight: haddock
+    theme: flatly
+    toc: yes
+    toc_float: yes
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# Dependancies
+```{r}
+library(tidyverse)
+library(janitor)
+library(stringr)
+library(openxlsx)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(janitor)
+library(scales)
+library(psych)
+library("htmltools")
+library(report)
+
+
+```
+
+# Data
+
+Load the processed data and apply the global exclusions.
+
+```{r}
+
+data_processed <- read_csv("../data/processed/data_processed.csv")
+
+# Exclude participants using the master exclusion variable.
+data_processed_after_exclusions <- data_processed |>
+  filter(exclude_participant == "include")
+
+```
+
+
+# Create a table with the total number of participants before exclusions.
+
+
+
+```{r}
+data_processed |>
+  count(name = "n") |>
+  kable() |>
+  add_header_above(header = c("before exclusion" = 1)) |> 
+  kable_classic(full_width = FALSE)
+
+
+
+
+```
+
+
+# Create a table with the total number of participants after exclusions.
+
+
+```{r}
+
+# Create a table with the total number of participants after exclusions.
+data_processed_after_exclusions |>
+  count(name = "n") |>
+  kable() |>
+  add_header_above(header = c("n after exclusion" = 1)) |>
+  kable_classic(full_width = FALSE)
+
+
+```
+# Demographics
+
+-   Create demographics tables that summarise the mean and SD age, and the frequency and percentage of men vs women in the sample. Report the proportion of participants for which each demographics variable was available.
+
+## Age & Sex
+
+```{r}
+# Take the dataset named 'data_processed_after_exclusions'
+data_processed_after_exclusions |>
+
+# Convert the 'age' column to numeric type
+  mutate(age = as.numeric(age)) |>
+
+# Calculate the mean and standard deviation (SD) of the 'age' column, ignoring NA values
+  summarise(Mean = mean(age, na.rm = TRUE),
+            SD = sd(age, na.rm = TRUE)) |>
+
+# Round all the values in the dataset to 1 decimal place
+  mutate_all(.funs = janitor::round_half_up, digits = 1) |>
+
+# Convert the data to a nicely formatted table using the 'kable' function
+  kable() |>
+
+# Add a header above the table with the title "Age" spanning 2 columns
+  add_header_above(header = c("Age" = 2)) |>
+
+# Apply a classic table style to the kable output, without full width
+  kable_classic(full_width = FALSE)
+
+# Next section of the code
+
+# Again, take the dataset 'data_processed_after_exclusions'
+data_processed_after_exclusions |> 
+
+# Group the data by the 'sex' column
+  group_by(sex) |> 
+
+# Summarise the data to count the number of occurrences in each group
+  summarise(n = n()) |> 
+
+# Calculate the percentage of each sex, round it to 1 decimal place, and append a '%' sign
+  mutate(Percent = paste0(round_half_up((n / sum(n)) * 100, 1), "%")) |>
+
+# Capitalize the first letter of each value in the 'sex' column
+  mutate(sex = stringr::str_to_sentence(sex)) |> 
+
+# Convert the data to a nicely formatted table using the 'kable' function
+  kable() |>
+
+# Apply a classic table style to the kable output, without full width
+  kable_classic(full_width = FALSE)
+
+
+```
+
+
+
+# Calculate Cronbach's alpha for each of the BFI subscales.
+
+
+```{r}
+
+
+# Agreeableness: 
+alpha(subset(data_processed_after_exclusions, select = c(bfi_a1, bfi_a2, bfi_a3, bfi_a4, 
+                                                         bfi_a5, bfi_a6, bfi_a7, bfi_a8,
+                                                         bfi_a9)), check.keys = TRUE)
+
+# Conscientiousness: 
+alpha(subset(data_processed_after_exclusions, select = c(bfi_c1, bfi_c2, bfi_c3, bfi_c4, 
+                                                         bfi_c5, bfi_c6, bfi_c7, bfi_c8,
+                                                         bfi_c9)), check.keys = TRUE)
+
+
+# Extraversion:
+alpha(subset(data_processed_after_exclusions, select = c(bfi_e1, bfi_e2, bfi_e3, bfi_e4, 
+                                                         bfi_e5, bfi_e6, bfi_e7, bfi_e8)), 
+      check.keys = TRUE)
+
+
+# Neuroticism: 
+alpha(subset(data_processed_after_exclusions, select = c(bfi_n1, bfi_n2, bfi_n3, bfi_n4, 
+                                                         bfi_n5, bfi_n6, bfi_n7, bfi_n8)), 
+      check.keys = TRUE)
+
+
+# Opennes: 
+alpha(subset(data_processed_after_exclusions, select = c(bfi_o1, bfi_o2, bfi_o3, bfi_o4, 
+                                                         bfi_o5, bfi_o6, bfi_o7, bfi_o8,
+                                                         bfi_o9, bfi_o10)), check.keys = TRUE)
+
+```
+# Create series of histograms of the distribution of scores on each of the BFI subscales 
+
+```{r}
+#Histograms for all the BFI- Subscales
+library(ggplot2)
+
+ggplot(data_processed_after_exclusions, aes(x=agreeableness_mean)) +
+  geom_histogram(binwidth = 0.25, fill="blue", color="black") +
+  labs(title="Histogram of Agreeableness Mean", x="Agreeableness Mean", y="Count") +
+  scale_x_continuous(limits = c(1, 6), breaks=1:6)
+
+
+# Histogram for conscientiousness_mean
+ggplot(data_processed_after_exclusions, aes(x=conscientiousness_mean)) +
+  geom_histogram(binwidth = 0.25, fill="blue", color="black") +
+  labs(title="Histogram of Conscientiousness Mean", x="Conscientiousness Mean", y="Count") +
+  scale_x_continuous(limits = c(1, 6), breaks=1:6)
+
+# Histogram for extraversion
+ggplot(data_processed_after_exclusions, aes(x=extraversion_mean)) +
+  geom_histogram(binwidth = 0.25, fill="blue", color="black") +
+  labs(title="Histogram of extraversion Mean", x="extraversion Mean", y="Count") +
+  scale_x_continuous(limits = c(1, 6), breaks=1:6)
+
+# Histogram for neuroticism
+ggplot(data_processed_after_exclusions, aes(x=neuroticism_mean)) +
+  geom_histogram(binwidth = 0.25, fill="blue", color="black") +
+  labs(title="Histogram of neuroticism Mean", x="neuroticism Mean", y="Count") +
+  scale_x_continuous(limits = c(1, 6), breaks=1:6)
+
+# Histogram for openness
+ggplot(data_processed_after_exclusions, aes(x=openness_mean)) +
+  geom_histogram(binwidth = 0.25, fill="blue", color="black") +
+  labs(title="Histogram of openness Mean", x="openness Mean", y="Count") +
+  scale_x_continuous(limits = c(1, 6), breaks=1:6)
+
+```
+
+
+# Create series of histograms of the distribution of scores for the IAT.
+
+```{r}
+
+library(ggplot2)
+
+ggplot(data_processed_after_exclusions, aes(x=D)) +
+  geom_histogram(binwidth = 0.1, fill="blue", color="black", na.rm = TRUE) +
+  labs(title="Histogram of IAT-D-Score Distribution", x="D-Score", y="Count") +
+  scale_x_continuous(
+    limits = c(-2, 2),
+    breaks = seq(-2, 2, by = 0.25))
+
+
+```
+
+# Create a table with a correlation matrix
+of the Pearson's r correlations between the IAT and the BFI subscales rounded to two decimal places.
+
+```{r}
+# Load the necessary library
+library(Hmisc)
+
+# Subset the dataframe to include only the relevant variables
+data_correlation <- data_processed_after_exclusions[c("D", "agreeableness_mean", "conscientiousness_mean", "extraversion_mean", "neuroticism_mean", "openness_mean")]
+
+# Use the cor function with the method "pearson" and use the use="pairwise.complete.obs"
+# to ensure that only pairwise complete observations are used for each correlation
+cor_matrix <- cor(data_correlation, method = "pearson", use = "pairwise.complete.obs")
+
+# Round the correlation matrix to two decimal places
+cor_matrix_rounded <- round(cor_matrix, 2)
+
+# Print the correlation matrix
+print(cor_matrix_rounded)
+
+```
+
+# Run a t-test
+to test the hypothesis that men and women differ on their scores on the IAT. Report and interpret the results using {report}.
+
+```{r}
+# Install and load the report package
+if (!requireNamespace("report", quietly = TRUE)) {
+  install.packages("report")
+}
+library(report)
+
+# Run the t-test
+t_test_result <- t.test(D ~ sex, data = data_processed_after_exclusions)
+
+# Generate a report
+report_result <- report(t_test_result)
+
+# Print the report
+print(report_result)
+
+```
+
+# Run a series of regressions
+to test the hypotheses that each BFI subscale predicts IAT scores. Run separate regressions for each subscale rather than a multiple regression. Report and interpret the results using {report}.
+
+```{r}
+# List of BFI subscales
+bfi_subscales <- c("agreeableness_mean", "conscientiousness_mean", "extraversion_mean", "neuroticism_mean", "openness_mean")
+
+# Loop through each BFI subscale and run a regression
+for (subscale in bfi_subscales) {
+  regression_formula <- as.formula(paste("D ~", subscale))
+  regression_result <- lm(regression_formula, data = data_processed_after_exclusions)
+  
+  # Report the results
+  report_result <- report(regression_result)
+  print(paste("Regression result for", subscale, ":"))
+  print(report_result)
+}
+
+```
+# Create series of scatter plots of how BFI subscale scores predict IAT scores.
+Add regression lines. These plots therefore illustrate the same results as the regressions above. Make the plots presentable and publication quality- you may decide the details of this with one exception: Extreme scores on the IAT (defined as participants whose scores in the top and bottom 10% of IAT scores) should use a triangular shape rather than a dot. A single combined plot should be created, containing 5 component plots, with the personality facet being examined in each clearly labelled. This plot should be printed in the html file but also saved to disk as both png/pdf. 
+
+### Note: The Png and PDF version of the plots look way better than what is printed in here, so check those.
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(gridExtra)
+
+# Identify the top and bottom 10% of IAT scores
+threshold_high <- quantile(data_processed_after_exclusions$D, 0.9, na.rm = TRUE)
+threshold_low <- quantile(data_processed_after_exclusions$D, 0.1, na.rm = TRUE)
+
+# Create a new column for shape
+data_processed_after_exclusions$shape <- ifelse(data_processed_after_exclusions$D >= threshold_high | data_processed_after_exclusions$D <= threshold_low, "triangle", "circle")
+
+# List of BFI subscales
+bfi_subscales <- c("agreeableness_mean", "conscientiousness_mean", "extraversion_mean", "neuroticism_mean", "openness_mean")
+
+# Create a list to store plots
+plots_list <- list()
+
+# Generate plots for each subscale
+for (subscale in bfi_subscales) {
+  p <- ggplot(data_processed_after_exclusions, aes_string(x=subscale, y="D", shape="shape")) +
+    geom_jitter(width = 0.1, height = 0, size = 2.5, alpha = 0.6) +
+    geom_smooth(method="lm", se=FALSE, aes(group = 1)) +
+    labs(
+      title=paste("IAT scores vs", subscale),
+      x=subscale,
+      y="IAT Score",
+      caption = "Note: Points have been jittered horizontally for visualization purposes, extreme values are represented by triangles."
+    ) +
+    scale_shape_manual(values=c(circle=16, triangle=17)) +
+    theme(legend.position = "none")
+
+  plots_list[[subscale]] <- p
+}
+
+# Combine the plots into a single plot
+combined_plot <- do.call(grid.arrange, c(plots_list, ncol=1))
+
+# Save the plot
+ggsave("bfi_iat_relationship.png", combined_plot, width = 10, height = 30)
+ggsave("bfi_iat_relationship.pdf", combined_plot, width = 10, height = 30)
+
+# Print the plot for the HTML file
+print(combined_plot)
+
+#Note: The Png and PDF version of the plots look way better than what is printed in here, so check those.
+
+```
+## Combine these scatter plots into one ggplot
+object using {patchwork} and print the combined plot in your .Rmd and .html. Save the combined plot to disk as a .pdf and .png in the "communications" folder.
+
+### Note: The Png and PDF version of the plots look way better than what is printed in here, so check those.
+
+```{r}
+# Install and load the patchwork package if you haven't already
+if (!requireNamespace("patchwork", quietly = TRUE)) {
+  install.packages("patchwork")
+}
+library(patchwork)
+
+# Identify the top and bottom 10% of IAT scores
+threshold_high <- quantile(data_processed_after_exclusions$D, 0.9, na.rm = TRUE)
+threshold_low <- quantile(data_processed_after_exclusions$D, 0.1, na.rm = TRUE)
+
+# Create a new column for shape
+data_processed_after_exclusions$shape <- ifelse(data_processed_after_exclusions$D >= threshold_high | data_processed_after_exclusions$D <= threshold_low, "triangle", "circle")
+
+# List of BFI subscales
+bfi_subscales <- c("agreeableness_mean", "conscientiousness_mean", "extraversion_mean", "neuroticism_mean", "openness_mean")
+
+# Create a list to store plots
+plots_list <- list()
+
+# Generate plots for each subscale
+for (subscale in bfi_subscales) {
+  p <- ggplot(data_processed_after_exclusions, aes_string(x=subscale, y="D", shape="shape")) +
+    geom_jitter(width = 0.1, height = 0, size = 2.5, alpha = 0.6) +
+    geom_smooth(method="lm", se=FALSE, aes(group = 1)) +
+    labs(
+      title=paste("IAT scores vs", subscale),
+      x=subscale,
+      y="IAT Score",
+      caption = "Note: Points have been jittered horizontally for visualization purposes, extreme values are represented by triangles."
+    ) +
+    scale_shape_manual(values=c(circle=16, triangle=17)) +
+    theme(legend.position = "none")
+
+  plots_list[[subscale]] <- p
+}
+
+
+# Combine the plots into a single plot using patchwork
+combined_plot <- patchwork::wrap_plots(plots_list, ncol = 1)
+
+# Print the combined plot for the R Markdown (.Rmd) and HTML file
+print(combined_plot)
+
+# Save the combined plot to the "communications" folder as .pdf and .png
+ggsave("../communications/bfi_iat_relationship.png", combined_plot, width = 10, height = 30)
+ggsave("../communications/bfi_iat_relationship.pdf", combined_plot, width = 10, height = 30)
+
+#Note: The Png and PDF version of the plots look way better than what is printed in here, so check those.
+
+```
+
+  
+
+
+# Session info
+
+```{r}
+# This line of code calls the 'sessionInfo()' function in R, which displays information about the current R session, including the R version, operating system, and loaded packages and their versions.
+
+sessionInfo()
+
+```
