@@ -116,7 +116,7 @@ GoodPenguinPlot
 
 
 
-The Palmer Penguins dataset originates from a study conducted by Dr. Kristen Gorman with the Palmer Station, Antarctica, to examine the morphology of three penguin species - Adelie, Chinstrap, and Gentoo. In this plot i will use this parts of this dataset and focus on the difference in weight between the different species.
+The Palmer Penguins dataset originates from a study conducted by Dr. Kristen Gorman with the Palmer Station, Antarctica, to examine the morphology of three penguin species - Adelie, Chinstrap, and Gentoo. In this plot i will use parts of this dataset and focus on the difference in weight between the different species.
 
 This "GoodPenguinPlot" is suitable for a comparative analysis, especially for understanding distribution and central tendencies of quantitative data across different categories, in this case weights of penguin species.
 It's ideal for visualizing how the body mass of penguins varies across species, revealing both the spread (variation) and the central tendency (median) of the data.
@@ -190,7 +190,7 @@ The arrangement of the categories is too cramped, reducing the plot's readabilit
 
 The y-axis scale, limited to a range of 3000 to 4500 grams, cuts off some data points, thus failing to represent the full scope of the dataset. The color choice for the plots is not only unappealing but also fails to provide clear differentiation between the species, which is crucial for comparative analysis.
 
-The legend, apart from being redundant, adding to the confusion. The use of 'geom_magnify' has been poorly implemented, as it overwrites data without magnifying any relevant or useful area of the plot.
+The legend, is redundant, adding to the confusion. The use of 'geom_magnify' has been poorly implemented, as it overwrites data without magnifying any relevant or useful area of the plot.
 
 Finally, the choice of text color, ranging from light green to light yellow, results in poor visibility against the plot's background, making it challenging to read the text elements.
 
